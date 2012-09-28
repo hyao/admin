@@ -1,0 +1,25 @@
+##
+# Example Ansible playbook that installs python virtualenv, pip
+# and install django-cms in a virtualenv on an Ubuntu system
+#
+---
+- hosts: ec2
+  sudo: True
+  gather_facts: False
+
+  tasks:
+  - name: ensure apt cache is up to date
+    action: apt update_cache=yes
+  - name: ensure packages are installed
+    action: apt pkg=$item
+    with_items:
+        - python-virtualenv
+        - python-pip
+
+- hosts: ec2
+  sudo: False
+  gather_facts: False
+
+  tasks:
+  - name: install django-cms into virtualenv
+    action: pip name=django-cms virtualenv=/home/ubuntu/ve/django-cms-env
