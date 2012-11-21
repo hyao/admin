@@ -1,0 +1,15 @@
+
+---
+- hosts: ec2 
+  sudo: True
+  gather_facts: False
+
+  tasks:
+  - name: add user admin_user 
+    user: name=admin_user state=present groups=sudo
+
+  - name: add user op 
+    user: name=op state=present
+
+
+

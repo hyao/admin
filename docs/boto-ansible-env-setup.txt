@@ -1,0 +1,15 @@
+
+To use boto, one needs to configure aws env, change the setup-aws-env accordingly, and source it.
+
+1. install ansible from ansible.cc
+2. add ec2 instance public dns name to ~/ansible_hosts
+in the format of:
+[yourhost]
+aws_ec2_dns_name.com
+
+3. cd into ansible dir:
+source ./hacking/env-setup
+
+4. run ansible-playbook (need to adapt private key location):
+ansible-playbook -u ubuntu --private-key=your_key playbook.yml
+

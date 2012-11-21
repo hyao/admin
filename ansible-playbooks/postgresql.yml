@@ -1,0 +1,18 @@
+
+---
+- hosts: ec2 
+  sudo: True
+  sudo_user: postgres
+  gather_facts: False
+
+  vars:
+    dbname: mydb 
+    dbpassword: yourpassword 
+
+  tasks:
+  - name: create database mydb 
+    action: postgresql_db db=$dbname
+
+  - name: ensure user myapp has access to database
+    action: postgresql_user db=$dbname user=myapp password=$dbpassword priv=ALL
+

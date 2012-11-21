@@ -1,0 +1,23 @@
+
+---
+- hosts: ec2-host 
+  sudo: True
+  gather_facts: False
+
+  tasks:
+  - name: ensure apt cache is up to date
+    action: apt update_cache=yes
+  - name: install required packages
+    action: apt pkg=$item
+    with_items:
+        - python
+        - python-pip
+        - subversion
+        - apache2
+        - libapache2-mod-wsgi
+        - postgresql
+        - libpq-dev
+        - python-psycopg2
+        - unzip
+  - name: pip install web2py
+    pip: name=web2py version=2.1.1          

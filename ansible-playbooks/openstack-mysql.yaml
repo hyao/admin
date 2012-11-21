@@ -1,0 +1,36 @@
+
+---
+- hosts: 127.0.0.1
+  sudo: True
+  gather_facts: False
+  
+  tasks:
+#  - name: update apt cache
+#    action: apt update_cache=yes
+  - name: install mysql python driver
+    action: apt pkg=python-mysqldb
+
+  - name: create db for openstack
+    action: mysql_db login_user=root login_password=mypass db=$item state=present
+    with_items:
+        - nova
+        - glance
+        - cinder
+        - keystone
+        - ovs_quantum
+
+  - name: create mysql user nova
+    action: mysql_user login_user=root login_password=mypass name=nova password=openstack priv=nova.*:ALL state=present
+
+  - name: create mysql user glance
+    action: mysql_user login_user=root login_password=mypass name=glance password=openstack priv=glance.*:ALL state=present
+
+  - name: create mysql user cinder
+    action: mysql_user login_user=root login_password=mypass name=cinder password=openstack priv=cinder.*:ALL state=present
+
+  - name: create mysql user keystone
+    action: mysql_user login_user=root login_password=mypass name=keystone password=openstack priv=keystone.*:ALL state=present
+
+  - name: create mysql user ovs_quantum
+    action: mysql_user login_user=root login_password=mypass name=ovs_quantum password=openstack priv=ovs_quantum.*:ALL state=present
+

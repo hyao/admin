@@ -1,0 +1,10 @@
+
+---
+- hosts: 127.0.0.1
+  sudo: True
+  gather_facts: False
+
+  tasks:
+  - name: keystone.conf
+#    ini_file: dest=/etc/keystone/keystone.conf section=DEFAULT option=admin_token value=admin backup=yes 
+    ini_file: dest=/etc/keystone/keystone.conf section=identity option=a value=0 backup=yes

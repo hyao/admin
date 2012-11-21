@@ -1,0 +1,72 @@
+
+################### add users ############################
+---
+- hosts: pyapp
+  sudo: True
+  gather_facts: False
+
+  tasks:
+  - name: add user admin 
+    user: name=admin state=present groups=sudo
+
+  - name: add user pyapp
+    user: name=pyapp state=present
+
+################# install software #######################
+- hosts: pyapp
+  sudo: True
+  gather_facts: False
+
+  tasks:
+  - name: ensure apt cache is up to date
+    action: apt update_cache=yes
+  - name: install required packages
+    action: apt pkg=$item
+    with_items:
+        - python
+        - python-pip
+        - subversion
+        - apache2
+        - libapache2-mod-wsgi
+        - postgresql
+        - libpq-dev
+        - python-psycopg2
+        - unzip
+
+################ configure postgresql ################
+- hosts: pyapp
+  sudo: True
+  sudo_user: postgres
+  gather_facts: False
+
+  vars:
+    dbname: pyapp
+    dbpassword: yourpassword 
+
+  tasks:
+  - name: create database pyapp
+    action: postgresql_db db=$dbname
+
+  - name: ensure user pyapp has access to database
+    action: postgresql_user db=$dbname user=pyapp password=$dbpassword priv=ALL
+
+################# install and configure web2py ###################
+- hosts: pyapp
+  sudo: True
+  gather_facts: False
+
+  tasks:
+  - name: get web2py 2.2.1 source code
+    command: chdir=/var/www wget http://www.web2py.com/examples/static/web2py_src.zip
+
+  - name: unzip web2py
+    command: chdir=/var/www unzip web2py_src.zip
+
+  - name: checkout pyapp code from svn
+    command: chdir=/var/www/web2py/applications svn co --username username --password mypassword https://svn_repo.com/svn_repo pyapp
+
+  - name: change ownership of /var/www/web2py dir 
+    command: chown -R www-data:www-data /var/www/web2py
+
+  - name: copy setup_web2py.sh to ec2 instance 
+    copy: src=../scripts/setup_web2py.sh dest=/home/ubuntu/setup_web2py.sh owner=root group=root mode=755
